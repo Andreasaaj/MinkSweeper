@@ -34,7 +34,8 @@ h1 {
 #game {
     width: min-content;
     background-color: rgb(192, 192, 192);
-    border: 10px solid rgb(240, 240, 240);
+    border: 8px solid rgb(240, 240, 240);
+    padding: 6px;
     border-style: outset;
     display: flex;
     flex-direction: column;
@@ -74,7 +75,9 @@ h1 {
 }
 
 #mink_left, #timer {
-
+    display: flex;
+    align-items: center;
+    justify-content: center;
     width: 300px;
     text-align: center;
     user-select: none;
@@ -82,12 +85,20 @@ h1 {
     margin-left: 50px;
     margin-right: 50px;
     font-size: 2em;
-    font-family:'Orbitron'
+    font-family:'Orbitron';
     /* font-family:'Clock-mono' */
 }
 
-#time_number, #mink_left_number {
+#time_number {
     color: red;
+    width: 90px;
+    text-align: left;
+}
+
+#mink_left_number {
+    color: red;
+    width: 90px;
+    text-align: left;
 }
 
 
@@ -105,11 +116,12 @@ h1 {
 /* 
 @font-face {
     font-family: 'Clock-mono';
-    font-style: normal;
-    src: url(fonts/digital-7.ttf) format('ttf');
+    font-style: oblique;
+    src: url(fonts/digital-7-mono.ttf) format('woff2');
     unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }
 */
+
 
 
 
