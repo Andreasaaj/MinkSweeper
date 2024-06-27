@@ -1,0 +1,121 @@
+body {
+    background-color: #00eeff2b;
+}
+
+#main {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.small-text {
+    font-size: 0.6em;
+}
+
+.undertext {
+    margin-top: 0px;
+    margin-bottom: 20px;
+    font-size: 1.2em;
+}
+
+h1 {
+    font-size: 3em;
+    margin-top: 5px;
+    margin-bottom: 10px;
+}
+
+#canvas {
+    border: 10px solid rgb(240, 240, 240);
+    border-style: inset;
+    margin: 10px;
+}
+
+#game {
+    width: min-content;
+    background-color: rgb(192, 192, 192);
+    border: 10px solid rgb(240, 240, 240);
+    border-style: outset;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+#game_info {
+    border: 10px solid white;
+    background-color: rgb(192, 192, 192);
+    border-style: inset;
+    /* border-color: rgb(128, 128, 128); */
+    width: 900px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    margin: 10px;
+    
+}
+
+#start_button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 150px;
+    height: 40px;
+    font-size: 1.5em;
+    margin: 20px;
+    background-color: rgba(0, 255, 0, 0.5);
+    border: 2px solid rgb(0, 0, 0);
+    border-radius: 10px;
+    cursor: pointer;
+}
+
+#start_button:hover {
+    background-color: rgba(0, 255, 0, 0.9);
+}
+
+#mink_left, #timer {
+
+    width: 300px;
+    text-align: center;
+    user-select: none;
+    margin: 20px;
+    margin-left: 50px;
+    margin-right: 50px;
+    font-size: 2em;
+    font-family:'Orbitron'
+    /* font-family:'Clock-mono' */
+}
+
+#time_number, #mink_left_number {
+    color: red;
+}
+
+
+@font-face {
+   font-family: 'Orbitron';
+   font-style: normal;
+   font-weight: 400;
+   /* src: url(https://fonts.gstatic.com/s/orbitron/v31/yMJMMIlzdpvBhQQL_SC3X9yhF25-T1nyGy6BoWgz.woff2) format('woff2'); */
+   src: url(fonts/Orbitron.woff2) format('woff2');
+   unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+
+
+/* 
+@font-face {
+    font-family: 'Clock-mono';
+    font-style: normal;
+    src: url(fonts/digital-7.ttf) format('ttf');
+    unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+*/
+
+
+
+
+
+
+
+
+
