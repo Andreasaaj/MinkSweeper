@@ -23,6 +23,8 @@ let buttonStartedHover = "rgba(255, 255, 0, 0.9)";
 let buttonLostColor = "rgba(255, 0, 0, 0.5)";
 let buttonLostHover = "rgba(255, 0, 0, 0.9)";
 
+let screenBgColor = document.getElementsByTagName("body")[0].style.backgroundColor;
+
 let currentButtonColor = buttonDefaultColor;
 let currentButtonHover = buttonDefaultHover;
 
@@ -61,7 +63,7 @@ canvas.addEventListener("click", function(event) {
         }
 
         if (cell.mine) {
-            gameOver();
+            gameLost();
         } else {
             revealCells(row, col);
             checkWin();
@@ -97,7 +99,7 @@ canvas.addEventListener("contextmenu", function(event) {
 
     cell.flagged = !cell.flagged;
     drawSquare(row, col);
-    
+    checkWin();
 });
 
 
@@ -252,38 +254,28 @@ function drawSquare(row, col) {
         // context.strokeRect(col * cellSize + lineWidth, row * cellSize + lineWidth, cellSize - 2 * lineWidth, cellSize - 2 * lineWidth);
 
         if (cell.mine) {
-            // Draw mine
-            // context.fillStyle = "red";
-            // context.beginPath();
-            // context.arc(col * cellSize + cellSize / 2, row * cellSize + cellSize / 2, cellSize / 3, 0, 2 * Math.PI);
-            // context.fill();
-
-            // Draw at center of cell
+            // Draw mine (minkImg)
             let scale = 1;
             let margin = (1 - scale) * cellSize / 2;
             context.drawImage(minkImg, col * cellSize + margin, row * cellSize + margin, scale * cellSize, scale * cellSize);
         } else if (cell.count > 0){
             // Draw number
-            // context.font = "30px Arial bold";
             context.font = "30px open-sans-extrabold";
             context.textAlign = "center";
             context.textBaseline = "middle";
             context.fillStyle = numberColors[cell.count - 1];
             context.fillText(cell.count, col * cellSize + cellSize / 2, row * cellSize + cellSize / 2);
         }
-    } else if (cell.flagged) {
-        // Draw flag (knife)
-        // context.fillStyle = "blue";
-        // context.beginPath();
-        // context.arc(col * cellSize + cellSize / 2, row * cellSize + cellSize / 2, cellSize / 3, 0, 2 * Math.PI);
-        // context.fill();
-
-        // Draw at center of cell
+    }
+    
+    if (cell.flagged) {
+        // Draw flag (knifeImg)
         let scale = 0.8;
         let margin = (1 - scale) * cellSize / 2;
         context.drawImage(knifeImg, col * cellSize + margin, row * cellSize + margin, scale * cellSize, scale * cellSize);
-
-    } else {
+    }
+    
+    if (!cell.revealed && !cell.flagged) {
         // Draw box
         context.drawImage(boxImg, col * cellSize, row * cellSize, cellSize, cellSize);
     }
@@ -302,16 +294,102 @@ function checkWin() {
     // console.log(count, cellsRevealed);
 
 
-    if (cellsRevealed == rows * cols - mines || flagsPlaced == mines) {
-        gameState = 2;
-        setButtonColor(buttonDefaultColor, buttonDefaultHover);
+    if (cellsRevealed == rows * cols - mines && flagsPlaced == mines) {
+        gameWon();
     }
 }
 
 
-function gameOver() {
+function gameWon() {
     gameState = 2;
+    revealMines();
+    setButtonColor(buttonDefaultColor, buttonDefaultHover);
+}
 
+
+
+function fadeElementsOut2() {
+    // Fade body background color to black
+    let bg = document.getElementsByTagName("body")[0];
+    bg.style.transition = "background-color 5s";
+    bg.style.backgroundColor = "rgba(0, 0, 0, 1)";
+    
+
+    // Fade elements with fade class out over 3 seconds
+    let elements = document.getElementsByClassName("fade");
+    let currentOpacity = 1;
+    let fadeTime = 2500;
+    let fadeStep = 0.01;
+
+    let fadeOut = setInterval(function() {
+        currentOpacity -= fadeStep;
+        if (currentOpacity <= 0) {
+            clearInterval(fadeOut);
+            for (let i = 0; i < elements.length; i++) {
+                elements[i].style.display = "none";
+            }
+        } else {
+            for (let i = 0; i < elements.length; i++) {
+                elements[i].style.opacity = currentOpacity;
+            }
+        }
+    }, fadeTime * fadeStep);
+}
+
+
+
+function fadeElementsOut() {
+    // Fade body background color to black
+    let bg = document.getElementsByTagName("body")[0];
+    bg.style.transition = "background-color 5s";
+    bg.style.backgroundColor = "rgba(0, 0, 0, 1)";
+
+    // apply .hidden css to all elements with class .fade
+    let elements = document.getElementsByClassName("fade");
+    for (let i = 0; i < elements.length; i++) {
+        elements[i].classList.remove("visible");
+        elements[i].classList.add("hidden");
+    }
+
+    // Call fadeElementsIn after 3 seconds
+    setTimeout(fadeInGameLostImg, 4000);
+}
+
+
+function fadeInGameLostImg() {
+    let gameLostScreen = document.getElementById("gameLostScreen");
+    gameLostScreen.classList.remove("hidden");
+    gameLostScreen.classList.add("slowvisible");
+}
+
+
+function gameLostButtonPressed() {
+    let gameLostScreen = document.getElementById("gameLostScreen");
+    gameLostScreen.classList.remove("slowvisible");
+    gameLostScreen.classList.add("hidden");
+
+    setTimeout(fadeElementsIn, 3000);
+}
+
+
+function fadeElementsIn() {
+    // Fade body background color to white
+    let bg = document.getElementsByTagName("body")[0];
+    bg.style.transition = "background-color 5s";
+    bg.style.backgroundColor = screenBgColor;
+
+    // remove .hidden css from all elements with class .fade, and add .visible
+    let elements = document.getElementsByClassName("fade");
+    for (let i = 0; i < elements.length; i++) {
+        elements[i].classList.remove("hidden");
+        elements[i].classList.add("visible");
+    }
+
+    startButton.classList.add("visible");
+}
+
+
+function revealMines() {
     // Reveal all mines
     for (let i = 0; i < board.length; i++) {
         for (let j = 0; j < board[i].length; j++) {
@@ -321,9 +399,28 @@ function gameOver() {
             }
         }
     }
+}
 
 
+function gameLost() {
+    gameState = 2;
+    revealMines()
     setButtonColor(buttonLostColor, buttonLostHover);
+
+    // If there are any flags placed on a mine, call fadeElementsOut
+    let minesFlagged = 0;
+    for (let i = 0; i < board.length; i++) {
+        for (let j = 0; j < board[i].length; j++) {
+            if (board[i][j].mine && board[i][j].flagged) {
+                minesFlagged++;
+            }
+        }
+    }
+
+    if (minesFlagged > 0) {
+        document.getElementById("minkKilled").innerText = minesFlagged;
+        fadeElementsOut();
+    }
 }
 
 

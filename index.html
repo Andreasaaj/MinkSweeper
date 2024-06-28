@@ -1,11 +1,21 @@
 <html>
 <head>
     <title>MinkSweeper</title>
+    <link rel="icon" type="image/x-icon" href="Images/mink.png">
     <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
-    <div id="main">
+    <div class="hidden" id="gameLostScreen">
+        <img src="Images/mink_vandt.png" alt="Minkene vandt :(" id="gameLostImg">
+        <div id="gameLostText">
+            Mink Myrdet:&nbsp;
+            <div id="minkKilled">0</div>
+        </div>
+        <button id="gameLostButton" onclick="gameLostButtonPressed()">Prøv igen</button>
+    </div>
+
+    <div class="fade" id="main">
         <h1>MinkSweeper</h1>
         <p class="undertext">MineSweeper, men mink 🦦. Idé af Em<span class="small-text">ink</span>ma</p>
         <div id="game">
