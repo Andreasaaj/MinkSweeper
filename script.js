@@ -32,6 +32,13 @@ let counter = document.getElementById("mink_left_number");
 let boxImg = new Image();
 boxImg.src = "Images/box.gif";
 
+let knifeImg = new Image();
+// https://www.iconfinder.com/icons/1531898/bloody_horror_kill_knife_icon
+knifeImg.src = "Images/kniv.png";
+
+let minkImg = new Image();
+minkImg.src = "Images/mink.png";
+
 let startTimestamp = null;
 
 
@@ -218,6 +225,9 @@ function createBoard(rows, cols, n_mines) {
 
 
 function drawBoard(board) {
+    context.font = "30px open-sans-extrabold";
+    context.fillText("Mink", 50, 50);
+
     context.clearRect(0, 0, canvas.width, canvas.height);
 
     for (let i = 0; i < board.length; i++) {
@@ -243,24 +253,36 @@ function drawSquare(row, col) {
 
         if (cell.mine) {
             // Draw mine
-            context.fillStyle = "red";
-            context.beginPath();
-            context.arc(col * cellSize + cellSize / 2, row * cellSize + cellSize / 2, cellSize / 3, 0, 2 * Math.PI);
-            context.fill();
+            // context.fillStyle = "red";
+            // context.beginPath();
+            // context.arc(col * cellSize + cellSize / 2, row * cellSize + cellSize / 2, cellSize / 3, 0, 2 * Math.PI);
+            // context.fill();
+
+            // Draw at center of cell
+            let scale = 1;
+            let margin = (1 - scale) * cellSize / 2;
+            context.drawImage(minkImg, col * cellSize + margin, row * cellSize + margin, scale * cellSize, scale * cellSize);
         } else if (cell.count > 0){
             // Draw number
-            context.font = "30px Arial bold";
+            // context.font = "30px Arial bold";
+            context.font = "30px open-sans-extrabold";
             context.textAlign = "center";
             context.textBaseline = "middle";
             context.fillStyle = numberColors[cell.count - 1];
             context.fillText(cell.count, col * cellSize + cellSize / 2, row * cellSize + cellSize / 2);
         }
     } else if (cell.flagged) {
-        // Draw flag
-        context.fillStyle = "blue";
-        context.beginPath();
-        context.arc(col * cellSize + cellSize / 2, row * cellSize + cellSize / 2, cellSize / 3, 0, 2 * Math.PI);
-        context.fill();
+        // Draw flag (knife)
+        // context.fillStyle = "blue";
+        // context.beginPath();
+        // context.arc(col * cellSize + cellSize / 2, row * cellSize + cellSize / 2, cellSize / 3, 0, 2 * Math.PI);
+        // context.fill();
+
+        // Draw at center of cell
+        let scale = 0.8;
+        let margin = (1 - scale) * cellSize / 2;
+        context.drawImage(knifeImg, col * cellSize + margin, row * cellSize + margin, scale * cellSize, scale * cellSize);
+
     } else {
         // Draw box
         context.drawImage(boxImg, col * cellSize, row * cellSize, cellSize, cellSize);
@@ -280,7 +302,7 @@ function checkWin() {
     // console.log(count, cellsRevealed);
 
 
-    if (cellsRevealed == rows * cols - mines) {
+    if (cellsRevealed == rows * cols - mines || flagsPlaced == mines) {
         gameState = 2;
         setButtonColor(buttonDefaultColor, buttonDefaultHover);
     }
