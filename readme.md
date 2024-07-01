@@ -1,1 +1,3 @@
 # MinkSweeper
+
+MineSweeper but Mink.

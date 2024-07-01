@@ -14,6 +14,21 @@
         </div>
         <button id="gameLostButton" onclick="gameLostButtonPressed()">Prøv igen</button>
     </div>
+    <div class="hidden" id="gameWonScreen">
+        <img src="Images/mink_død.jpg" alt="Minkene blev myrdet" id="gameWonImg">
+        <div id="gameWonText">
+            Sekunder pr. myrdet mink:&nbsp;
+            <div id="timePerMink">0</div>
+        </div>
+        <button id="gameWonButton" onclick="gameWonButtonPressed()">Begrav minkene</button>
+    </div>
+    <div class="hidden" id="gameWonScreen2">
+        <img src="Images/mink_grav.jpg" alt="Minkene blev begravet" id="gameWonImg2">
+        <div id="gameWonText2">
+            R.I.P.
+        </div>
+    </div>
+    <button class="hidden" id="gameWonButton2" onclick="gameWonButtonPressed2()">Myrd flere mink</button>
 
     <div class="fade" id="main">
         <h1>MinkSweeper</h1>

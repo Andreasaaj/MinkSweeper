@@ -1,7 +1,7 @@
 
 let rows = 12;
 let cols = 18;
-let mines = 32;
+let mines = 30;
 
 let cellSize;
 let flagsPlaced = 0;
@@ -31,6 +31,11 @@ let currentButtonHover = buttonDefaultHover;
 let timer = document.getElementById("time_number");
 let counter = document.getElementById("mink_left_number");
 
+let gameLostButton = document.getElementById("gameLostButton");
+let gameWonButton = document.getElementById("gameWonButton");
+let gameWonButton2 = document.getElementById("gameWonButton2");
+
+
 let boxImg = new Image();
 boxImg.src = "Images/box.gif";
 
@@ -40,6 +45,9 @@ knifeImg.src = "Images/kniv.png";
 
 let minkImg = new Image();
 minkImg.src = "Images/mink.png";
+
+// let minkDeadImg = new Image();
+// minkDeadImg.src = "Images/mink_død.png";
 
 let startTimestamp = null;
 
@@ -56,16 +64,11 @@ canvas.addEventListener("click", function(event) {
     let cell = board[row][col];
 
     if (!cell.revealed) {
-        if (cell.flagged) {
-            flagsPlaced--;
-            counter.innerText = mines - flagsPlaced;
-            cell.flagged = false;
-        }
+        revealCells(row, col);
 
         if (cell.mine) {
             gameLost();
         } else {
-            revealCells(row, col);
             checkWin();
         }
     }
@@ -103,10 +106,26 @@ canvas.addEventListener("contextmenu", function(event) {
 });
 
 
-function revealCells(row, col) {
-    let cell = board[row][col];
+function revealCell(cell) {
+    if (cell.flagged) {
+        flagsPlaced--;
+        counter.innerText = mines - flagsPlaced;
+        cell.flagged = false;
+    }
+
     cell.revealed = true;
     cellsRevealed++;
+}
+
+
+function revealCells(row, col) {
+    let cell = board[row][col];
+    revealCell(cell)
+    
+    if (cell.mine) {
+        return;
+    }
+
     drawSquare(row, col);
 
     if (cell.count > 0) {
@@ -125,8 +144,7 @@ function revealCells(row, col) {
                 if (board[i][j].count == 0) {
                     revealCells(i, j);
                 } else {
-                    board[i][j].revealed = true;
-                    cellsRevealed++;
+                    revealCell(board[i][j]);
                     drawSquare(i, j);
                 }
             }
@@ -283,18 +301,8 @@ function drawSquare(row, col) {
 
 
 function checkWin() {
-    // let count = 0;
-    // for (let i = 0; i < board.length; i++) {
-    //     for (let j = 0; j < board[i].length; j++) {
-    //         if (board[i][j].revealed) {
-    //             count++;
-    //         }
-    //     }
-    // }
-    // console.log(count, cellsRevealed);
-
-
-    if (cellsRevealed == rows * cols - mines && flagsPlaced == mines) {
+    // if (cellsRevealed == rows * cols - mines && flagsPlaced == mines) {
+    if (flagsPlaced == 4) {
         gameWon();
     }
 }
@@ -304,10 +312,12 @@ function gameWon() {
     gameState = 2;
     revealMines();
     setButtonColor(buttonDefaultColor, buttonDefaultHover);
+    document.getElementById("timePerMink").innerText = (parseInt(timer.innerText) / mines).toFixed(1);
+    gameWonAnimation();
 }
 
 
-
+/* 
 function fadeElementsOut2() {
     // Fade body background color to black
     let bg = document.getElementsByTagName("body")[0];
@@ -335,23 +345,59 @@ function fadeElementsOut2() {
         }
     }, fadeTime * fadeStep);
 }
+*/
 
 
+function gameWonAnimation() {
+    fadeElementsOut("rgba(135, 0, 0, 1)");
 
-function fadeElementsOut() {
-    // Fade body background color to black
-    let bg = document.getElementsByTagName("body")[0];
-    bg.style.transition = "background-color 5s";
-    bg.style.backgroundColor = "rgba(0, 0, 0, 1)";
+    setTimeout(fadeInGameWonImg, 3000);
+}
 
-    // apply .hidden css to all elements with class .fade
-    let elements = document.getElementsByClassName("fade");
-    for (let i = 0; i < elements.length; i++) {
-        elements[i].classList.remove("visible");
-        elements[i].classList.add("hidden");
-    }
 
-    // Call fadeElementsIn after 3 seconds
+function fadeInGameWonImg() {
+    let gameWonScreen = document.getElementById("gameWonScreen");
+    gameWonScreen.classList.remove("hidden");
+    gameWonScreen.classList.add("slowervisible");
+    gameWonButton.style.display = "";
+}
+
+
+function gameWonButtonPressed() {
+    let gameWonScreen2 = document.getElementById("gameWonScreen2");
+    gameWonScreen2.classList.add("slowvisible");
+    gameWonScreen2.classList.remove("hidden");
+
+    gameWonButton.style.display = "none";
+    // gameWonButton2.style.display = "none";
+
+    // TODO: fix button fade in
+
+    setTimeout(() => {
+            let gameWonScreen = document.getElementById("gameWonScreen");
+            gameWonScreen.classList.remove("slowervisible");
+            gameWonScreen.classList.add("hidden");
+            gameWonButton2.style.display = "";
+            gameWonButton2.classList.remove("hidden");
+            gameWonButton2.classList.add("visible");
+    }, 6000);
+}
+
+
+function gameWonButtonPressed2() {
+    let gameWonScreen2 = document.getElementById("gameWonScreen2");
+    gameWonScreen2.classList.remove("slowvisible");
+    gameWonScreen2.classList.add("hidden");
+
+    gameWonButton2.classList.remove("visible");
+    gameWonButton2.classList.add("hidden");
+
+    setTimeout(fadeElementsIn, 3000);
+}
+
+
+function gameLostAnimation() {
+    fadeElementsOut("rgba(0, 0, 0, 1)");
     setTimeout(fadeInGameLostImg, 4000);
 }
 
@@ -359,16 +405,35 @@ function fadeElementsOut() {
 function fadeInGameLostImg() {
     let gameLostScreen = document.getElementById("gameLostScreen");
     gameLostScreen.classList.remove("hidden");
-    gameLostScreen.classList.add("slowvisible");
+    gameLostScreen.classList.add("slowervisible");
+    gameLostButton.style.display = "";
 }
 
 
 function gameLostButtonPressed() {
+    // console.log("gameLostButtonPressed");
     let gameLostScreen = document.getElementById("gameLostScreen");
-    gameLostScreen.classList.remove("slowvisible");
     gameLostScreen.classList.add("hidden");
+    gameLostScreen.classList.remove("slowervisible");
 
-    setTimeout(fadeElementsIn, 3000);
+    setTimeout(fadeElementsIn, 2500);
+}
+
+
+function fadeElementsOut(bgColor) {
+    // Fade body background color to black
+    let bg = document.getElementsByTagName("body")[0];
+    bg.style.transition = "background-color 5s";
+    bg.style.backgroundColor = bgColor;
+
+    startButton.style.display = "none";
+
+    // apply .hidden css to all elements with class .fade
+    let elements = document.getElementsByClassName("fade");
+    for (let i = 0; i < elements.length; i++) {
+        elements[i].classList.remove("visible");
+        elements[i].classList.add("hidden");
+    }
 }
 
 
@@ -385,7 +450,11 @@ function fadeElementsIn() {
         elements[i].classList.add("visible");
     }
 
-    startButton.classList.add("visible");
+    // startButton.classList.add("visible");
+    startButton.style.display = "";
+    gameLostButton.style.display = "none";
+    gameWonButton.style.display = "none";
+    gameWonButton2.style.display = "none";
 }
 
 
@@ -418,8 +487,8 @@ function gameLost() {
     }
 
     if (minesFlagged > 0) {
-        document.getElementById("minkKilled").innerText = minesFlagged;
-        fadeElementsOut();
+        document.getElementById("minkKilled").innerText = `${minesFlagged} ud af ${mines}`;
+        gameLostAnimation();
     }
 }
 
