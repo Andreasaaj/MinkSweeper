@@ -49,6 +49,9 @@ minkImg.src = "Images/mink.png";
 // let minkDeadImg = new Image();
 // minkDeadImg.src = "Images/mink_død.png";
 
+let lossSound = new Audio("sounds/Dark_Souls_Sfx.mp3");
+let beepSound = new Audio("sounds/Truck_Backing_Sfx.mp3");
+
 let startTimestamp = null;
 
 
@@ -301,8 +304,7 @@ function drawSquare(row, col) {
 
 
 function checkWin() {
-    // if (cellsRevealed == rows * cols - mines && flagsPlaced == mines) {
-    if (flagsPlaced == 4) {
+    if (cellsRevealed == rows * cols - mines && flagsPlaced == mines) {
         gameWon();
     }
 }
@@ -371,6 +373,8 @@ function gameWonButtonPressed() {
     gameWonButton.style.display = "none";
     // gameWonButton2.style.display = "none";
 
+    beepSound.play();
+
     // TODO: fix button fade in
 
     setTimeout(() => {
@@ -407,6 +411,8 @@ function fadeInGameLostImg() {
     gameLostScreen.classList.remove("hidden");
     gameLostScreen.classList.add("slowervisible");
     gameLostButton.style.display = "";
+    
+    setTimeout(lossSound.play(), 6000);
 }
 
 
