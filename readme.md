@@ -1,3 +1,3 @@
 # MinkSweeper
 
-MineSweeper but Mink.
+MineSweeper but Mink. RIP O7

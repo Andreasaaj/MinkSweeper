@@ -1,6 +1,7 @@
 
+// rows needs to be 2/3 of cols with current canvas size
 let rows = 12;
-let cols = 18;
+let cols = 18; 
 let mines = 30;
 
 let cellSize;
@@ -9,6 +10,8 @@ let cellsRevealed = 0;
 
 let gameState = 0; // 0: not started, 1: started, 2: finished
 let board = [];
+let startTimestamp = null;
+let restartClickedCounter = 0;
 
 let numberColors = ["blue", "green", "red", "purple", "maroon", "turquoise", "black", "gray"];
 
@@ -46,19 +49,25 @@ knifeImg.src = "Images/kniv.png";
 let minkImg = new Image();
 minkImg.src = "Images/mink.png";
 
+let restartMinkImg = new Image();
+restartMinkImg.src = "Images/mink2.png";
+
 // let minkDeadImg = new Image();
 // minkDeadImg.src = "Images/mink_død.png";
 
 let lossSound = new Audio("sounds/Dark_Souls_Sfx.mp3");
 let beepSound = new Audio("sounds/Truck_Backing_Sfx.mp3");
 
-let startTimestamp = null;
+let numbers_font = "30px open-sans-extrabold";
+document.fonts.load(numbers_font);
+
 
 
 canvas.addEventListener("click", function(event) {
     if (gameState != 1) {
         return;
     }
+    restartClickedCounter = 0;
 
     let x = event.offsetX;
     let y = event.offsetY;
@@ -169,6 +178,10 @@ function timerCallback() {
 
 
 function startGame() {
+    if (gameState == 1) {
+        restartClickedCounter++;
+    }
+
     gameState = 1;
 
     startTimestamp = Date.now();
@@ -184,6 +197,12 @@ function startGame() {
 
     board = createBoard(rows, cols, mines);
     drawBoard(board);
+    
+    if (restartClickedCounter > 3) {
+        restartClickedCounter = 0;
+        context.clearRect(0, 0, canvas.width, canvas.height);
+        context.drawImage(restartMinkImg, 0, 0, canvas.width, canvas.height);
+    }
 }
 
 
@@ -248,9 +267,6 @@ function createBoard(rows, cols, n_mines) {
 
 
 function drawBoard(board) {
-    context.font = "30px open-sans-extrabold";
-    context.fillText("Mink", 50, 50);
-
     context.clearRect(0, 0, canvas.width, canvas.height);
 
     for (let i = 0; i < board.length; i++) {
@@ -281,7 +297,7 @@ function drawSquare(row, col) {
             context.drawImage(minkImg, col * cellSize + margin, row * cellSize + margin, scale * cellSize, scale * cellSize);
         } else if (cell.count > 0){
             // Draw number
-            context.font = "30px open-sans-extrabold";
+            context.font = numbers_font;
             context.textAlign = "center";
             context.textBaseline = "middle";
             context.fillStyle = numberColors[cell.count - 1];
@@ -482,7 +498,8 @@ function gameLost() {
     revealMines()
     setButtonColor(buttonLostColor, buttonLostHover);
 
-    // If there are any flags placed on a mine, call fadeElementsOut
+    // If there are any flags placed on a mine, the game is really lost,
+    // so call fadeElementsOut
     let minesFlagged = 0;
     for (let i = 0; i < board.length; i++) {
         for (let j = 0; j < board[i].length; j++) {
