@@ -90,12 +90,6 @@ canvas.addEventListener("click", function(event) {
 canvas.addEventListener("contextmenu", function(event) {
     event.preventDefault();
 
-    // Vibration for press-hold automatically works in Chrome, but not Firefox
-    // So call it manually
-    if ("vibrate" in navigator) {
-        navigator.vibrate(200);
-    }
-
     if (gameState != 1) {
         return;
     }
