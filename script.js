@@ -18,6 +18,11 @@ let numberColors = ["blue", "green", "red", "purple", "maroon", "turquoise", "bl
 let canvas = document.getElementById("canvas");
 let context = canvas.getContext("2d");
 
+let param = (new URLSearchParams(document.location.search)).get("seed");
+let loadedWithSeed = param !== null && !isNaN(Number(param));
+
+let rng = mulberry32(0);
+
 let startButton = document.getElementById("start_button");
 let buttonDefaultColor = startButton.style.backgroundColor;
 let buttonDefaultHover = "rgba(0, 255, 0, 0.9)";
@@ -177,6 +182,23 @@ function timerCallback() {
 }
 
 
+function setRngSeed() {
+    const url = new URL(window.location);
+    let seed;
+    if (loadedWithSeed) {
+        loadedWithSeed = false;
+        seed = url.searchParams.get("seed");
+    } else {
+        seed = Math.floor(Math.random() * 1000000);
+        url.searchParams.set("seed", seed);
+        window.history.pushState({}, "", url);
+    }
+
+    rng = mulberry32(Number(seed));
+}
+
+
+// Called when start_button is pressed
 function startGame() {
     if (gameState == 1) {
         restartClickedCounter++;
@@ -194,6 +216,8 @@ function startGame() {
 
     startButton.innerText = "Genstart";
     setButtonColor(buttonStartedColor, buttonStartedHover);
+
+    setRngSeed();
 
     board = createBoard(rows, cols, mines);
     drawBoard(board);
@@ -220,8 +244,8 @@ function createBoard(rows, cols, n_mines) {
     // Place mines
     let count = 0;
     while (count < n_mines) {
-        let row = Math.floor(Math.random() * rows);
-        let col = Math.floor(Math.random() * cols);
+        let row = Math.floor(rng() * rows);
+        let col = Math.floor(rng() * cols);
 
         if (!board[row][col].mine) {
             board[row][col].mine = true;
