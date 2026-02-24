@@ -1,7 +1,7 @@
 
 // rows needs to be 2/3 of cols with current canvas size
 let rows = 12;
-let cols = 18; 
+let cols = 18;
 let mines = 30;
 
 let cellSize;
@@ -68,7 +68,7 @@ document.fonts.load(numbers_font);
 
 
 
-canvas.addEventListener("click", function(event) {
+canvas.addEventListener("click", function (event) {
     if (gameState != 1) {
         return;
     }
@@ -98,7 +98,7 @@ canvas.addEventListener("click", function(event) {
 });
 
 
-canvas.addEventListener("contextmenu", function(event) {
+canvas.addEventListener("contextmenu", function (event) {
     event.preventDefault();
 
     if (gameState != 1) {
@@ -144,7 +144,7 @@ function revealCell(cell) {
 function revealCells(row, col) {
     let cell = board[row][col];
     revealCell(cell)
-    
+
     if (cell.mine) {
         return;
     }
@@ -211,23 +211,23 @@ function startGame() {
     }
 
     gameState = 1;
-    
+
     cellsRevealed = 0;
     flagsPlaced = 0;
-    
+
     counter.innerText = mines;
-    
+
     startButton.innerText = "Genstart";
     setButtonColor(buttonStartedColor, buttonStartedHover);
-    
+
     setRngSeed();
-    
+
     board = createBoard(rows, cols);
     drawBoard(board);
 
     startTimestamp = Date.now();
     timerCallback();
-    
+
     if (restartClickedCounter > 3) {
         restartClickedCounter = 0;
         context.clearRect(0, 0, canvas.width, canvas.height);
@@ -242,7 +242,7 @@ function createBoard(rows, cols) {
     for (let i = 0; i < rows; i++) {
         let row = [];
         for (let j = 0; j < cols; j++) {
-            row.push({mine: false, revealed: false, flagged: false, count: 0});
+            row.push({ mine: false, revealed: false, flagged: false, count: 0 });
         }
         board.push(row);
     }
@@ -326,7 +326,7 @@ function drawSquare(row, col) {
             let scale = 1;
             let margin = (1 - scale) * cellSize / 2;
             context.drawImage(minkImg, col * cellSize + margin, row * cellSize + margin, scale * cellSize, scale * cellSize);
-        } else if (cell.count > 0){
+        } else if (cell.count > 0) {
             // Draw number
             context.font = numbers_font;
             context.textAlign = "center";
@@ -335,14 +335,14 @@ function drawSquare(row, col) {
             context.fillText(cell.count, col * cellSize + cellSize / 2, row * cellSize + cellSize / 2);
         }
     }
-    
+
     if (cell.flagged) {
         // Draw flag (knifeImg)
         let scale = 0.8;
         let margin = (1 - scale) * cellSize / 2;
         context.drawImage(knifeImg, col * cellSize + margin, row * cellSize + margin, scale * cellSize, scale * cellSize);
     }
-    
+
     if (!cell.revealed && !cell.flagged) {
         // Draw box
         context.drawImage(boxImg, col * cellSize, row * cellSize, cellSize, cellSize);
@@ -425,12 +425,12 @@ function gameWonButtonPressed() {
     // TODO: fix button fade in
 
     setTimeout(() => {
-            let gameWonScreen = document.getElementById("gameWonScreen");
-            gameWonScreen.classList.remove("slowervisible");
-            gameWonScreen.classList.add("hidden");
-            gameWonButton2.style.display = "";
-            gameWonButton2.classList.remove("hidden");
-            gameWonButton2.classList.add("visible");
+        let gameWonScreen = document.getElementById("gameWonScreen");
+        gameWonScreen.classList.remove("slowervisible");
+        gameWonScreen.classList.add("hidden");
+        gameWonButton2.style.display = "";
+        gameWonButton2.classList.remove("hidden");
+        gameWonButton2.classList.add("visible");
     }, 6000);
 }
 
@@ -458,7 +458,7 @@ function fadeInGameLostImg() {
     gameLostScreen.classList.remove("hidden");
     gameLostScreen.classList.add("slowervisible");
     gameLostButton.style.display = "";
-    
+
     setTimeout(lossSound.play(), 6000);
 }
 
@@ -554,13 +554,63 @@ function setButtonColor(bgColor, hoverColor) {
 }
 
 
-startButton.onmouseenter = function() {
+startButton.onmouseenter = function () {
     startButton.style.backgroundColor = currentButtonHover;
 }
 
-startButton.onmouseleave = function() {
+startButton.onmouseleave = function () {
     startButton.style.backgroundColor = currentButtonColor;
 }
+
+
+// --- Info pop-up ---
+document.addEventListener('DOMContentLoaded', () => {
+    const infoButton = document.getElementById('infoButton');
+    const infoOverlay = document.getElementById('infoOverlay');
+    const infoModal = document.getElementById('infoModal');
+    const infoClose = document.getElementById('infoClose');
+
+    if (!infoButton || !infoOverlay || !infoModal || !infoClose) {
+        return; // Nothing to do if elements not present
+    }
+
+    function openInfo() {
+        infoOverlay.classList.add('info-show');
+        requestAnimationFrame(() => infoModal.classList.add('info-show'));
+
+        // Prevent background scroll while pop-up is open
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeInfo() {
+        infoModal.classList.remove('info-show');
+
+        // Remove overlay's visible state after animation finishes
+        setTimeout(() => {
+            infoOverlay.classList.remove('info-show');
+        }, 100);
+
+        // Allow background scrolling again
+        document.body.style.overflow = '';
+    }
+
+    infoButton.addEventListener('click', openInfo);
+    infoClose.addEventListener('click', closeInfo);
+
+    // Clicking outside the pop-up closes it
+    infoOverlay.addEventListener('click', (e) => {
+        if (e.target === infoOverlay) {
+            closeInfo();
+        }
+    });
+
+    // ESC key also closes it
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && infoModal.classList.contains('info-show')) {
+            closeInfo();
+        }
+    });
+});
 
 
 

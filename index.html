@@ -1,5 +1,7 @@
 <!DOCTYPE html>
+
 <html>
+
 <head>
     <title>MinkSweeper</title>
     <link rel="icon" type="image/x-icon" href="Images/mink.png">
@@ -33,7 +35,6 @@
 
     <div class="fade" id="main">
         <h1>MinkSweeper</h1>
-        <p class="undertext">MineSweeper, men mink <span title="Det en odder, men tæt på">🦦</span>. Idé af Em<span class="small-text">ink</span>ma</p>
         <div id="game">
             <div id="game_info">
                 <div id="mink_left">
@@ -48,9 +49,24 @@
             </div>
             <canvas id="canvas" width=900px height=600 style="background-color: rgb(192, 192, 192);"></canvas>
         </div>
+        <button id="infoButton" class="info-button" aria-label="Information">i</button>
+        <div id="infoOverlay" class="info-overlay"></div>
+        <div id="infoModal" class="info-modal" role="dialog" aria-modal="true" aria-labelledby="infoTitle">
+            <button id="infoClose" class="info-close" aria-label="Luk">×</button>
+            <h2 id="infoTitle">MinkSweeper — Info</h2>
+            <div class="info-content">
+                <p class="info-text">MineSweeper, men mink <span title="Det en odder, men tæt på">🦦</span></p>
+                <p class="info-text">Idé af Em<span class="small-text">ink</span>ma</p>
+                <p class="info-text">Programmering af <span title="Dvs. mig">Andreas</span></p>
+            </div>
+        </div>
     </div>
     <div id="hidden" style="display: none;">.</div>
+
+
+
     <script type="text/javascript" src="modules/rng.js"></script>
     <script type="text/javascript" src="script.js"></script>
 </body>
+
 </html>
