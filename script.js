@@ -72,6 +72,7 @@ canvas.addEventListener("click", function(event) {
     if (gameState != 1) {
         return;
     }
+
     restartClickedCounter = 0;
 
     let x = event.offsetX;
@@ -79,6 +80,11 @@ canvas.addEventListener("click", function(event) {
     let row = Math.floor(y / cellSize);
     let col = Math.floor(x / cellSize);
     let cell = board[row][col];
+
+    // Mines are placed when the first cell of the game is clicked
+    if (cellsRevealed == 0) {
+        placeMines([row, col]);
+    }
 
     if (!cell.revealed) {
         revealCells(row, col);
@@ -205,22 +211,22 @@ function startGame() {
     }
 
     gameState = 1;
+    
+    cellsRevealed = 0;
+    flagsPlaced = 0;
+    
+    counter.innerText = mines;
+    
+    startButton.innerText = "Genstart";
+    setButtonColor(buttonStartedColor, buttonStartedHover);
+    
+    setRngSeed();
+    
+    board = createBoard(rows, cols);
+    drawBoard(board);
 
     startTimestamp = Date.now();
     timerCallback();
-
-    cellsRevealed = 0;
-    flagsPlaced = 0;
-
-    counter.innerText = mines;
-
-    startButton.innerText = "Genstart";
-    setButtonColor(buttonStartedColor, buttonStartedHover);
-
-    setRngSeed();
-
-    board = createBoard(rows, cols, mines);
-    drawBoard(board);
     
     if (restartClickedCounter > 3) {
         restartClickedCounter = 0;
@@ -230,7 +236,7 @@ function startGame() {
 }
 
 
-function createBoard(rows, cols, n_mines) {
+function createBoard(rows, cols) {
     // Create empty board
     let board = [];
     for (let i = 0; i < rows; i++) {
@@ -241,15 +247,26 @@ function createBoard(rows, cols, n_mines) {
         board.push(row);
     }
 
-    // Place mines
-    let count = 0;
-    while (count < n_mines) {
+    // Set cell size
+    if (canvas.width > canvas.height) {
+        cellSize = canvas.width / cols;
+    } else {
+        cellSize = canvas.height / rows;
+    }
+
+    return board;
+}
+
+
+function placeMines(first_cell) {
+    let placed = 0;
+    while (placed < mines) {
         let row = Math.floor(rng() * rows);
         let col = Math.floor(rng() * cols);
 
-        if (!board[row][col].mine) {
+        if (!board[row][col].mine && row != first_cell[0] && col != first_cell[1]) {
             board[row][col].mine = true;
-            count++;
+            placed++;
         }
     }
 
@@ -278,17 +295,7 @@ function createBoard(rows, cols, n_mines) {
             board[i][j].count = count;
         }
     }
-
-    // Set cell size
-    if (canvas.width > canvas.height) {
-        cellSize = canvas.width / cols;
-    } else {
-        cellSize = canvas.height / rows;
-    }
-
-    return board;
 }
-
 
 function drawBoard(board) {
     context.clearRect(0, 0, canvas.width, canvas.height);
