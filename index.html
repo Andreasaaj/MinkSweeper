@@ -49,6 +49,15 @@
             </div>
             <canvas id="canvas" width=900px height=600 style="background-color: rgb(192, 192, 192);"></canvas>
         </div>
+        <button id="scoresButton" class="scores-button" aria-label="Scores">🏆</button>
+        <div id="scoresOverlay" class="scores-overlay"></div>
+        <div id="scoresModal" class="scores-modal" role="dialog" aria-modal="true" aria-labelledby="scoresTitle">
+            <button id="scoresClose" class="scores-close" aria-label="Luk">×</button>
+            <h2 id="scoresTitle">Bedste Scorer</h2>
+            <div class="scores-content">
+                <div id="scoresTable"></div>
+            </div>
+        </div>
         <button id="infoButton" class="info-button" aria-label="Information">i</button>
         <div id="infoOverlay" class="info-overlay"></div>
         <div id="infoModal" class="info-modal" role="dialog" aria-modal="true" aria-labelledby="infoTitle">
@@ -57,7 +66,7 @@
             <div class="info-content">
                 <p class="info-text">MineSweeper, men mink <span title="Det en odder, men tæt på">🦦</span></p>
                 <p class="info-text">Idé af Em<span class="small-text">ink</span>ma</p>
-                <p class="info-text">Programmering af <span title="Dvs. mig">Andreas</span></p>
+                <p class="info-text">Programmering af <span title="Dvs. mig">Andreas</span> (Se <a href="https://github.com/Andreasaaj/MinkSweeper" target="_blank">GitHub🔗</a>)</p>
             </div>
         </div>
     </div>

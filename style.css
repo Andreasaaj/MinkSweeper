@@ -226,6 +226,152 @@ h1 {
     transition: opacity 8s ease-in;
 }
 
+/* Scores button, modal and blur */
+.scores-button {
+    position: fixed;
+    left: 20px;
+    bottom: 20px;
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: rgb(34, 177, 76);
+    color: white;
+    font-size: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35);
+    border: 2px solid rgba(255, 255, 255, 0.06);
+    z-index: 1200;
+    transition: transform 0.12s ease, background 0.12s ease;
+}
+
+.scores-button:hover {
+    transform: scale(1.06);
+}
+
+.scores-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.25);
+    backdrop-filter: blur(0px);
+    z-index: 1100;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 300ms ease, backdrop-filter 300ms ease;
+}
+
+.scores-overlay.scores-show {
+    opacity: 1;
+    backdrop-filter: blur(6px);
+    pointer-events: auto;
+}
+
+.scores-modal {
+    position: fixed;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%) scale(0.95);
+    background: white;
+    padding: 15px 30px 30px 30px;
+    border-radius: 12px;
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.35);
+    z-index: 1150;
+    max-width: 800px;
+    width: calc(100% - 64px);
+    opacity: 0;
+    pointer-events: none;
+    transition: transform 260ms cubic-bezier(.2, .9, .2, 1), opacity 220ms ease;
+    max-height: 80vh;
+    overflow-y: auto;
+}
+
+.scores-modal.scores-show {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.scores-close {
+    position: absolute;
+    right: 10px;
+    top: 6px;
+    border: none;
+    background: transparent;
+    font-size: 25px;
+    cursor: pointer;
+    color: #444;
+}
+
+.scores-content {
+    color: #222;
+    font-size: 0.95rem;
+    margin-top: 12px;
+}
+
+#scoresTable {
+    width: 100%;
+}
+
+#scoresTable table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+}
+
+#scoresTable th,
+#scoresTable td {
+    border: 1px solid #ddd;
+    padding: 8px 12px;
+    text-align: left;
+}
+
+#scoresTable th {
+    background-color: #f0f0f0;
+    font-weight: 600;
+}
+
+#scoresTable tr:hover {
+    background-color: #f9f9f9;
+}
+
+/* prevent cell resizing when button text changes */
+.seed-cell {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.score-copy-btn {
+    padding: 4px 8px;
+    font-size: 0.85rem;
+    min-width: 70px;
+    background: #1a85ff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background 0.2s;
+    white-space: nowrap;
+    margin-left: 10px;
+}
+
+.score-copy-btn:hover {
+    background: #0d5dcc;
+}
+
+.score-copy-btn.copied {
+    background: #22b14c;
+}
+
+/* helper initial hide/show classes used specifically for the scores modal */
+.scores-show {
+    visibility: visible;
+    opacity: 1;
+    pointer-events: auto;
+}
+
 /* Info button, pop-up box and blur */
 .info-button {
     position: fixed;

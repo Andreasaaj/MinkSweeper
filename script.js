@@ -616,6 +616,11 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function openInfo() {
+        // Close scores modal if open
+        const otherModal = document.getElementById('scoresModal');
+        if (otherModal && otherModal.classList.contains('scores-show')) {
+            window.closeScores && window.closeScores();
+        }
         infoOverlay.classList.add('info-show');
         requestAnimationFrame(() => infoModal.classList.add('info-show'));
 
@@ -638,6 +643,10 @@ document.addEventListener('DOMContentLoaded', () => {
     infoButton.addEventListener('click', openInfo);
     infoClose.addEventListener('click', closeInfo);
 
+    // Expose for the other pop-up modal
+    window.openInfo = openInfo;
+    window.closeInfo = closeInfo;
+
     // Clicking outside the pop-up closes it
     infoOverlay.addEventListener('click', (e) => {
         if (e.target === infoOverlay) {
@@ -649,6 +658,130 @@ document.addEventListener('DOMContentLoaded', () => {
     document.addEventListener('keydown', (e) => {
         if (e.key === 'Escape' && infoModal.classList.contains('info-show')) {
             closeInfo();
+        }
+    });
+});
+
+
+// --- Leaderboard pop-up ---
+document.addEventListener('DOMContentLoaded', () => {
+    const scoresButton = document.getElementById('scoresButton');
+    const scoresOverlay = document.getElementById('scoresOverlay');
+    const scoresModal = document.getElementById('scoresModal');
+    const scoresClose = document.getElementById('scoresClose');
+    const scoresTable = document.getElementById('scoresTable');
+
+    if (!scoresButton || !scoresOverlay || !scoresModal || !scoresClose || !scoresTable) {
+        return; // Nothing to do if elements not present
+    }
+
+    function getScoresFromStorage() {
+        const stored = localStorage.getItem('scores');
+        try {
+            return stored ? JSON.parse(stored) : [];
+        } catch {
+            return [];
+        }
+    }
+
+    function renderScoresTable() {
+        const scores = getScoresFromStorage();
+
+        if (scores.length === 0) {
+            scoresTable.innerHTML = '<p class=info-text>Ingen gemte scorer endnu, kan du ikke vinde?</p>';
+            return;
+        }
+
+        let tableHtml = '<table><thead><tr><th>#</th><th>Score (sek)</th><th>Dato</th><th>Seed</th></tr></thead><tbody>';
+
+        scores.forEach((score, index) => {
+            tableHtml += `<tr>
+                <td>${index+1}.</td>
+                <td>${score.score}</td>
+                <td>${score.datetime}</td>
+                <td class="seed-cell">
+                    <span class="seed-text">${score.seed}</span>
+                    <button class="score-copy-btn" data-seed="${score.seed}" data-index="${index}">Copy</button>
+                </td>
+            </tr>`;
+        });
+
+        tableHtml += '</tbody></table>';
+        scoresTable.innerHTML = tableHtml;
+
+        // Add copy button event listeners
+        scoresTable.querySelectorAll('.score-copy-btn').forEach((btn) => {
+            btn.addEventListener('click', (e) => {
+                const seed = e.target.dataset.seed;
+                const index = parseInt(e.target.dataset.index);
+                let locationOrigin = window.location.origin;
+                if (locationOrigin === "null" || locationOrigin === null) {
+                    locationOrigin = "file://";
+                }
+                const baseUrl = locationOrigin + window.location.pathname;
+                const urlWithSeed = `${baseUrl}?seed=${seed}`;
+
+                navigator.clipboard.writeText(urlWithSeed).then(() => {
+                    // Show visual feedback
+                    const originalText = e.target.innerText;
+                    e.target.innerText = 'Copied!';
+                    e.target.classList.add('copied');
+                    e.target.disabled = true;
+
+                    setTimeout(() => {
+                        e.target.innerText = originalText;
+                        e.target.classList.remove('copied');
+                        e.target.disabled = false;
+                    }, 1500);
+                });
+            });
+        });
+    }
+
+    function openScores() {
+        // Close info pop-up if open
+        const otherModal = document.getElementById('infoModal');
+        if (otherModal && otherModal.classList.contains('info-show')) {
+            window.closeInfo && window.closeInfo();
+        }
+        renderScoresTable();
+        scoresOverlay.classList.add('scores-show');
+        requestAnimationFrame(() => scoresModal.classList.add('scores-show'));
+
+        // Prevent background scroll while pop-up is open
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeScores() {
+        scoresModal.classList.remove('scores-show');
+
+        // Remove overlay's visible state after animation finishes
+        setTimeout(() => {
+            scoresOverlay.classList.remove('scores-show');
+        }, 100);
+
+        // Allow background scrolling again
+        document.body.style.overflow = '';
+    }
+
+    scoresButton.addEventListener('click', openScores);
+    scoresClose.addEventListener('click', closeScores);
+
+    // Expose for the other pop-up modal
+    window.openScores = openScores;
+    window.closeScores = closeScores;
+
+    // Clicking outside the pop-up closes it
+    scoresOverlay.addEventListener('click', (e) => {
+        if (e.target === scoresOverlay) {
+            closeScores();
+        }
+    });
+
+    // ESC key also closes it
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && scoresModal.classList.contains('scores-show')) {
+            closeScores();
         }
     });
 });
