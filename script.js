@@ -2,7 +2,7 @@
 // rows needs to be 2/3 of cols with current canvas size
 let rows = 12;
 let cols = 18;
-let mines = 1;
+let mines = 30;
 
 let cellSize;
 let flagsPlaced = 0;
@@ -679,7 +679,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 <td>${score.datetime}</td>
                 <td class="seed-cell">
                     <span class="seed-text">${score.seed}</span>
-                    <button class="score-copy-btn" data-seed="${score.seed}" data-index="${index}">Copy</button>
+                    <button class="score-copy-btn" data-seed="${score.seed}" data-index="${index}">Kopiér</button>
                 </td>
             </tr>`;
         });
@@ -702,7 +702,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 navigator.clipboard.writeText(urlWithSeed).then(() => {
                     // Show visual feedback
                     const originalText = e.target.innerText;
-                    e.target.innerText = 'Copied!';
+                    e.target.innerText = 'Kopieret!';
                     e.target.classList.add('copied');
                     e.target.disabled = true;
 

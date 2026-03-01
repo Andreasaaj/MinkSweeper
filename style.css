@@ -340,7 +340,16 @@ h1 {
 .seed-cell {
     display: flex;
     align-items: center;
+    justify-content: space-between;
     gap: 6px;
+    min-width: 140px;
+}
+.seed-text {
+    flex-shrink: 0;
+    width: 80px;
+    text-align: left;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .score-copy-btn {
