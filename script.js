@@ -12,6 +12,7 @@ let gameState = 0; // 0: not started, 1: started, 2: finished
 let board = [];
 let startTimestamp = null;
 let restartClickedCounter = 0;
+let gameSeed;
 
 let numberColors = ["blue", "green", "red", "purple", "maroon", "turquoise", "black", "gray"];
 
@@ -190,17 +191,16 @@ function timerCallback() {
 
 function setRngSeed() {
     const url = new URL(window.location);
-    let seed;
     if (loadedWithSeed) {
         loadedWithSeed = false;
-        seed = url.searchParams.get("seed");
+        gameSeed = Number(url.searchParams.get("seed"));
     } else {
-        seed = Math.floor(Math.random() * 1000000);
-        url.searchParams.set("seed", seed);
+        gameSeed = Math.floor(Math.random() * 1000000);
+        url.searchParams.set("seed", gameSeed);
         window.history.pushState({}, "", url);
     }
 
-    rng = mulberry32(Number(seed));
+    rng = mulberry32(gameSeed);
 }
 
 
@@ -359,10 +359,51 @@ function checkWin() {
 
 function gameWon() {
     gameState = 2;
+
+    let scoreMs = (Date.now() - startTimestamp) / 1000;
+    scoreMs = parseFloat(scoreMs.toFixed(2))
+    storeScore({ score: scoreMs, datetime: new Date().toLocaleString(), seed: gameSeed });
+
     revealMines();
+
     setButtonColor(buttonDefaultColor, buttonDefaultHover);
     document.getElementById("timePerMink").innerText = (parseInt(timer.innerText) / mines).toFixed(1);
     gameWonAnimation();
+}
+
+
+function storeScore(newScore) {
+    const score_key_name = "scores";
+
+    if (
+        typeof newScore !== "object" ||
+        typeof newScore.score !== "number" ||
+        typeof newScore.datetime !== "string" ||
+        typeof newScore.seed !== "number"
+    ) {
+        throw new Error("newScore must be { score: number, seed: number }");
+    }
+
+    const stored = localStorage.getItem(score_key_name);
+
+    let scores;
+    try {
+        scores = stored ? JSON.parse(stored) : [];
+    } catch {
+        scores = [];
+    }
+
+    if (!Array.isArray(scores)) {
+        scores = [];
+    }
+
+    scores.push(newScore);
+
+    // Sort to lowest first
+    scores.sort((a, b) => a.score - b.score);
+    scores = scores.slice(0, 10);
+
+    localStorage.setItem(score_key_name, JSON.stringify(scores));
 }
 
 
