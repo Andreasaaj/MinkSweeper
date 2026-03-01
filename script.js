@@ -2,7 +2,7 @@
 // rows needs to be 2/3 of cols with current canvas size
 let rows = 12;
 let cols = 18;
-let mines = 30;
+let mines = 1;
 
 let cellSize;
 let flagsPlaced = 0;
@@ -407,37 +407,6 @@ function storeScore(newScore) {
 }
 
 
-/* 
-function fadeElementsOut2() {
-    // Fade body background color to black
-    let bg = document.getElementsByTagName("body")[0];
-    bg.style.transition = "background-color 5s";
-    bg.style.backgroundColor = "rgba(0, 0, 0, 1)";
-    
-
-    // Fade elements with fade class out over 3 seconds
-    let elements = document.getElementsByClassName("fade");
-    let currentOpacity = 1;
-    let fadeTime = 2500;
-    let fadeStep = 0.01;
-
-    let fadeOut = setInterval(function() {
-        currentOpacity -= fadeStep;
-        if (currentOpacity <= 0) {
-            clearInterval(fadeOut);
-            for (let i = 0; i < elements.length; i++) {
-                elements[i].style.display = "none";
-            }
-        } else {
-            for (let i = 0; i < elements.length; i++) {
-                elements[i].style.opacity = currentOpacity;
-            }
-        }
-    }, fadeTime * fadeStep);
-}
-*/
-
-
 function gameWonAnimation() {
     fadeElementsOut("rgba(135, 0, 0, 1)");
 
@@ -450,6 +419,8 @@ function fadeInGameWonImg() {
     gameWonScreen.classList.remove("hidden");
     gameWonScreen.classList.add("slowervisible");
     gameWonButton.style.display = "";
+    gameWonButton.disabled = false;
+    gameWonButton2.disabled = true;
 }
 
 
@@ -458,18 +429,23 @@ function gameWonButtonPressed() {
     gameWonScreen2.classList.add("slowvisible");
     gameWonScreen2.classList.remove("hidden");
 
-    gameWonButton.style.display = "none";
-    // gameWonButton2.style.display = "none";
+    gameWonButton.disabled = true;
 
     beepSound.play();
-
-    // TODO: fix button fade in
 
     setTimeout(() => {
         let gameWonScreen = document.getElementById("gameWonScreen");
         gameWonScreen.classList.remove("slowervisible");
         gameWonScreen.classList.add("hidden");
-        gameWonButton2.style.display = "";
+
+        // Prepare button2 for fade-in: hide it and reset classes
+        gameWonButton2.disabled = false;
+        gameWonButton2.style.display = ""; // Make part of layout
+        gameWonButton2.classList.remove("visible");
+        gameWonButton2.classList.add("hidden");
+        // Force reflow so transition will run
+        void gameWonButton2.offsetWidth;
+        // Now show with animation
         gameWonButton2.classList.remove("hidden");
         gameWonButton2.classList.add("visible");
     }, 6000);
@@ -483,6 +459,8 @@ function gameWonButtonPressed2() {
 
     gameWonButton2.classList.remove("visible");
     gameWonButton2.classList.add("hidden");
+    
+    gameWonButton2.disabled = true;
 
     setTimeout(fadeElementsIn, 3000);
 }
